@@ -31,7 +31,7 @@ from pathlib import Path
 RACINE = Path(__file__).resolve().parent.parent
 SORTIE = RACINE / "sortie"
 AJOUTS = RACINE / "ajouts"
-CLE = os.environ.get("ABUSECH_CLE", "").strip()
+CLE = os.environ.get("ABUSECH_CLE", "").strip().lstrip("﻿").strip()   # sans caractère invisible (BOM)
 UA = {"User-Agent": "AlpinShield-base/1.0 (+https://github.com/fabrice0180-art/alpinshield-base)"}
 RE_SHA = re.compile(r"^[0-9a-f]{64}$")
 RE_DOMAINE = re.compile(r"^(?=.{4,253}$)(?!-)([a-z0-9-]{1,63}\.)+[a-z]{2,63}$")
