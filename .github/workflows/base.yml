@@ -1,0 +1,53 @@
+# Base de menaces Alpin Shield (développement par Fabrice M.) : reconstruite toutes les 6 heures, gratuitement.
+name: Base
+on:
+  schedule:
+    - cron: "17 */6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write   # publier la release « base »
+  issues: write     # fermer les tickets de contribution une fois intégrés
+
+concurrency:
+  group: base
+  cancel-in-progress: false
+
+jobs:
+  construire:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+
+      - name: État précédent des contributions
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          mkdir -p sortie
+          gh release download base -p contributions.json -D sortie --clobber || echo "Première construction"
+
+      - name: Contributions des installations
+        env: { GITHUB_TOKEN: "${{ github.token }}" }
+        run: python outils/integrer.py
+
+      - name: Construction de la base
+        env: { ABUSECH_CLE: "${{ secrets.ABUSECH_CLE }}" }
+        run: python outils/construire.py
+
+      - name: Publication
+        env: { GH_TOKEN: "${{ github.token }}" }
+        run: |
+          gh release view base >/dev/null 2>&1 || gh release create base --title "Base Alpin Shield" --notes "Première publication."
+          gh release upload base sortie/* --clobber
+          NOTES=$(python3 - <<'PY'
+          import json
+          d = json.load(open("sortie/index.json"))
+          print(f"Base mise à jour le {d['date']} : {d['empreintes']:,} empreintes ({d['menaces']:,} menaces, "
+                f"{d['sains']:,} logiciels sains), {d['domaines']:,} sites dangereux, {d['serveurs']:,} serveurs pirates."
+                .replace(",", " "))
+          PY
+          )
+          gh release edit base --notes "$NOTES"
+          echo "$NOTES" >> "$GITHUB_STEP_SUMMARY"

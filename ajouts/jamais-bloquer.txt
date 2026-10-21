@@ -1,0 +1,1 @@
+# Domaines à ne jamais bloquer (fausse alerte) : un par ligne
