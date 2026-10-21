@@ -61,6 +61,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: "${{ secrets.CLOUDFLARE_API_TOKEN || secrets.CLOUFLARE_API_TOKEN }}"
           CLOUDFLARE_ACCOUNT_ID: "${{ secrets.CLOUDFLARE_ACCOUNT_ID }}"
           CLE_CONTRIBUTION: "${{ secrets.CLE_CONTRIBUTION }}"
+          GH_TOKEN: "${{ github.token }}"
         run: |
           if [ -z "$CLOUDFLARE_API_TOKEN" ] || [ -z "$CLOUDFLARE_ACCOUNT_ID" ]; then
             echo "Cloudflare pas encore configuré : étape ignorée."; exit 0
@@ -71,6 +72,10 @@ jobs:
           CLE_CONTRIBUTION=$(printf '%s' "$CLE_CONTRIBUTION" | tr -d ' \r\n\357\273\277')
           W="npx --yes wrangler@3.114.0"
           rm -rf site && mkdir site && cp sortie/* site/
+          # dernière version d'Alpin Shield (version « logiciel ») : copiée aussi sur Cloudflare
+          mkdir -p site/logiciel
+          gh release download logiciel -D site/logiciel 2>/dev/null || echo "Pas encore de version du logiciel publiée."
+          python3 outils/logiciel_cloudflare.py site/logiciel
           $W pages project create alpinshield-base --production-branch main >/dev/null 2>&1 || true
           if [ -n "$CLE_CONTRIBUTION" ]; then
             printf '%s' "$CLE_CONTRIBUTION" | $W pages secret put GITHUB_JETON --project-name alpinshield-base
