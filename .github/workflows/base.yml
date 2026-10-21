@@ -36,6 +36,13 @@ jobs:
         env: { ABUSECH_CLE: "${{ secrets.ABUSECH_CLE }}" }
         run: python outils/construire.py
 
+      # Signature de la base (obligatoire) : Alpin Shield refuse une base non signée ou modifiée
+      - name: Signature de la base
+        env: { SIGNATURE_BASE: "${{ secrets.SIGNATURE_BASE }}" }
+        run: |
+          pip install --quiet cryptography
+          python outils/signer.py sortie/index.json
+
       - name: Publication
         env: { GH_TOKEN: "${{ github.token }}" }
         run: |
