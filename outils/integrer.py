@@ -81,7 +81,10 @@ def main() -> int:
             refuses += 1
         else:
             acceptes += 1
-            appareil = d["appareil"]
+            # via le guichet Cloudflare : une voix par réseau (empreinte anonyme), pour qu'on ne puisse pas
+            # gonfler les votes en inventant des appareils ; envoi direct (anciennes versions) : une voix par appareil
+            reseau = str(d.get("reseau", ""))
+            appareil = reseau if RE_APPAREIL.match(reseau) else d["appareil"]
             if appareil not in etat["appareils"]:
                 etat["appareils"].append(appareil)
             for e in (d.get("empreintes") or [])[:2000]:
