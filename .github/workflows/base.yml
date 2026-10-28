@@ -1,8 +1,9 @@
-# Base de menaces Alpin Shield (développement par Fabrice M.) : reconstruite toutes les 6 heures, gratuitement.
+# Base de menaces Alpin Shield (développement par Fabrice M.) : reconstruite toutes les 2 heures, gratuitement
+# (dépôt public : minutes GitHub gratuites ; 12 copies Cloudflare par jour, sous la limite du plan gratuit).
 name: Base
 on:
   schedule:
-    - cron: "17 */6 * * *"
+    - cron: "17 */2 * * *"
   workflow_dispatch:
 
 permissions:

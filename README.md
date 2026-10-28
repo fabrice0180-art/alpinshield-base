@@ -1,7 +1,7 @@
 # Base Alpin Shield
 
 Base de menaces utilisée par **Alpin Shield** (développement par Fabrice M.) sur ordinateur (Windows, Mac, Linux)
-et sur iPhone. Reconstruite automatiquement **toutes les 6 heures** par GitHub, gratuitement.
+et sur iPhone. Reconstruite automatiquement **toutes les 2 heures** par GitHub, gratuitement.
 
 ## Ce qu'elle contient
 
